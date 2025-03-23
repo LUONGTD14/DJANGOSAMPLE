@@ -74,3 +74,73 @@
 # define serializer model will help to convert object to JSON when use API on mysite/news/serializers.py
 
 # define viewset to support auto CRUD API on mysite/news/views.py
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find & Download</title>
+</head>
+<body>
+    <h2>Nhập Label ID:</h2>
+    <input type="text" id="labelId" placeholder="Nhập ID...">
+    <button onclick="findData()">Find</button>
+
+    <h2>Chọn giá trị:</h2>
+    <label for="dropdown1">Option 1:</label>
+    <select id="dropdown1"></select>
+
+    <label for="dropdown2">Option 2:</label>
+    <select id="dropdown2"></select>
+
+    <label for="dropdown3">Option 3:</label>
+    <select id="dropdown3"></select>
+
+    <br><br>
+    <button onclick="downloadFile()">Download</button>
+
+    <script>
+        function findData() {
+            let labelId = document.getElementById("labelId").value;
+            fetch(`/api/get-data/?id=${labelId}`)
+                .then(response => response.json())
+                .then(data => {
+                    fillDropdown("dropdown1", data.key1);
+                    fillDropdown("dropdown2", data.key2);
+                    fillDropdown("dropdown3", data.key3);
+                })
+                .catch(error => console.error("Lỗi:", error));
+        }
+
+        function fillDropdown(dropdownId, values) {
+            let dropdown = document.getElementById(dropdownId);
+            dropdown.innerHTML = "";
+            values.forEach(value => {
+                let option = document.createElement("option");
+                option.value = value;
+                option.textContent = value;
+                dropdown.appendChild(option);
+            });
+        }
+
+        function downloadFile() {
+            let selected1 = document.getElementById("dropdown1").value;
+            let selected2 = document.getElementById("dropdown2").value;
+            let selected3 = document.getElementById("dropdown3").value;
+
+            let params = new URLSearchParams({
+                option1: selected1,
+                option2: selected2,
+                option3: selected3
+            });
+
+            window.location.href = `/api/download/?${params.toString()}`;
+        }
+    </script>
+</body>
+</html>
